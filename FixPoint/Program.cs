@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Windows.Forms;
 
 namespace FixPoint
@@ -6,28 +6,54 @@ namespace FixPoint
     internal static class Program
     {
         [STAThread]
-        private static void Main()
+        private static void Main(string[] args)
         {
+            if (args.Length == 1 && args[0] == "--backup")
+            {
+                try
+                {
+                    Database.BackupToday(true);
+                }
+                catch
+                {
+                    Environment.ExitCode = 1;
+                }
+                return;
+            }
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Database.Initialize();
-            using (var window = new Form
+            bool ready = false;
+            Ui.Try(null, () => { Database.Initialize(); ready = true; });
+            if (!ready)
+                return;
+            Ui.Try(null, () => Database.BackupToday());
+            try
             {
-                Text = "FixPoint — учёт заявок сервисного центра",
-                StartPosition = FormStartPosition.CenterScreen,
-                Width = 800,
-                Height = 500
-            })
+                RunForms();
+            }
+            finally
             {
-                window.Controls.Add(new DataGridView
+                Ui.Try(null, () => Database.BackupToday(true));
+            }
+        }
+
+        private static void RunForms()
+        {
+            while (true)
+            {
+                using (var login = new LoginForm())
                 {
-                    Dock = DockStyle.Fill,
-                    ReadOnly = true,
-                    AllowUserToAddRows = false,
-                    AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
-                    DataSource = Database.Read("SELECT Id AS [Код], Name AS [Статус] FROM Statuses ORDER BY Id")
-                });
-                Application.Run(window);
+                    if (login.ShowDialog() != DialogResult.OK)
+                        return;
+
+                    using (var main = new MainForm(login.Employee))
+                    {
+                        main.ShowDialog();
+                        if (!main.SignOut)
+                            return;
+                    }
+                }
             }
         }
     }

@@ -32,6 +32,14 @@
     <Compile Include="Program.cs" />
     <Compile Include="Database.cs" />
     <Compile Include="Sqlite.cs" />
+    <Compile Include="Clients.cs" />
+    <Compile Include="Repairs.cs" />
+    <Compile Include="FormTools.cs" />
+    <Compile Include="MainForm.cs" />
+    <Compile Include="ClientForm.cs" />
+    <Compile Include="RepairForm.cs" />
+    <Compile Include="IssueForm.cs" />
+    <Compile Include="AccountForms.cs" />
     <None Include="App.config" />
     <EmbeddedResource Include="..\Database\01_Create.sql">
       <Link>Database\01_Create.sql</Link>
