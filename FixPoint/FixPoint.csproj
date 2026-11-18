@@ -30,7 +30,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
+    <Compile Include="Database.cs" />
+    <Compile Include="Sqlite.cs" />
     <None Include="App.config" />
+    <EmbeddedResource Include="..\Database\01_Create.sql">
+      <Link>Database\01_Create.sql</Link>
+      <LogicalName>FixPoint.CreateDatabase.sql</LogicalName>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
